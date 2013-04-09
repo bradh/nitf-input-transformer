@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright (c) Lockheed Martin Corporation
+ *
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or any later version. 
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details. A copy of the GNU Lesser General Public License is distributed along with this program and can be found at
+ * <http://www.gnu.org/licenses/lgpl.html>.
+ *
+ **/
+
+ -->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+                    xmlns:bp="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0" >
+
+     <!--<cm:property-placeholder persistent-id="org.codice.ddf.transform.ais" update-strategy="reload">-->
+         <!--<cm:default-properties>-->
+             <!--<cm:property name="org.codice.ddf.transform.ais.url" value="http://localhost:8080/services/catalog"/>-->
+         <!--</cm:default-properties>-->
+     <!--</cm:property-placeholder>-->
+
+    <!--<reference id="ddf-fanout" interface="ddf.catalog.CatalogFramework"/>-->
+
+    <!--<bean id="transformer"-->
+          <!--class="org.codice.ddf.transform.ais.AISInputTransformer" >-->
+        <!--<property name="catalog" ref="ddf-fanout"/>-->
+    <!--</bean>-->
+
+    <!--<service ref="transformer" interface="ddf.catalog.transform.InputTransformer">-->
+        <!--<service-properties>-->
+            <!--<entry key="id" value="ais" />-->
+            <!--&lt;!&ndash; List of mime type this AISInputTransformer supports &ndash;&gt;-->
+            <!--<entry key="mime-type">-->
+                <!--<list>-->
+                    <!--<value>application/ais-nmea</value>-->
+                <!--</list>-->
+            <!--</entry>-->
+        <!--</service-properties>-->
+    <!--</service>-->
+
+    <!--&lt;!&ndash;<bean id="fileInputStream" class="java.io.FileInputStream">&ndash;&gt;-->
+        <!--&lt;!&ndash;<argument type="java.lang.String" value="/Users/kwplummer/Downloads/20130226.log" />&ndash;&gt;-->
+    <!--&lt;!&ndash;</bean>&ndash;&gt;-->
+
+    <!--<bean id="datagramInputStream" class="org.codice.ddf.utility.ais.DatagramInputStream" >-->
+        <!--<argument value="62626" type="int"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="inputStreamAdapter" class="org.codice.ddf.utility.ais.AISInputStreamAdapter" init-method="init"-->
+            <!--destroy-method="destroy">-->
+        <!--<argument ref="datagramInputStream" />-->
+        <!--<argument value="${org.codice.ddf.transform.ais.url}" />-->
+        <!--<argument value="1000" />-->
+    <!--</bean>-->
+
+
+
+</blueprint>
