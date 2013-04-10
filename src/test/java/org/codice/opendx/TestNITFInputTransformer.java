@@ -30,6 +30,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertNotSame;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -70,6 +71,14 @@ public class TestNITFInputTransformer {
 
     transformer.fileCreated(new FileChangeEvent(VFS.getManager().resolveFile(file)));
     verify(catalog, never()).create(any(CreateRequest.class));
+  }
+
+  @Test()
+  public void testCreateThumbnail() throws Exception {
+    NITFInputTransformer transformer = createTransformer();
+
+    String tempJpeg = transformer.createThumbnail(Thread.currentThread().getContextClassLoader().getResource("i_3001a.ntf").getFile());
+    assertNotSame(tempJpeg, "");
   }
 
 }

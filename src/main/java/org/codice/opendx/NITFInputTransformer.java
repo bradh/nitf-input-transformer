@@ -20,6 +20,8 @@ import ddf.catalog.operation.CreateRequestImpl;
 import ddf.catalog.operation.CreateResponse;
 import joms.oms.DataInfo;
 import joms.oms.Init;
+import joms.oms.Util;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileChangeEvent;
 import org.apache.commons.vfs2.FileListener;
@@ -28,6 +30,8 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+import org.codice.opendx.utility.ThumbnailCreationException;
+
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -41,6 +45,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Date;
+import java.util.UUID;
 
 public class NITFInputTransformer implements FileListener {
 
@@ -111,11 +116,35 @@ public class NITFInputTransformer implements FileListener {
     return metacard;
   }
 
+  String createThumbnail(String nitfPath) throws ThumbnailCreationException {
+    File tempDirectory = new File(FileUtils.getTempDirectoryPath());
+    String jpeg = UUID.randomUUID().toString() + ".jpeg";
+
+    int entryId = 0;
+    String outputFile = tempDirectory.getAbsolutePath() + jpeg;
+    String writerType = "image/jpeg";
+    int xRes = Integer.parseInt("32");
+    int yRes = Integer.parseInt("32");
+    String histogramFile = "";
+    String stretchType = "linear_auto_min_max";
+    boolean keepAspectFlag = true;
+
+    boolean status = Util.writeImageSpaceThumbnail(
+            nitfPath, entryId, outputFile, writerType, xRes, yRes, histogramFile, stretchType, keepAspectFlag
+    );
+
+    if(status)
+      return outputFile;
+    else
+      throw new ThumbnailCreationException("Failed to created thumbnail " + outputFile + " from nitf " + nitfPath);
+  }
+
   @Override
   public void fileCreated(FileChangeEvent fileChangeEvent) throws Exception {
     FileObject file = fileChangeEvent.getFile();
+    log.info("Processing file: " + file.getName().getBaseName());
     if(!file.getName().getExtension().equals("nitf") && !file.getName().getExtension().equals("ntf")){
-      System.out.println(file.getName().getExtension());
+      log.info("Not processing file: " + file.getName().getBaseName() + " extension doesn't match 'nitf' or 'ntf'");
       return;
     }
 
@@ -130,6 +159,7 @@ public class NITFInputTransformer implements FileListener {
             getNITF(buildDocument(info)))));
 
     assert(response.getCreatedMetacards().size() == 1);
+    log.info("Processing file: " + file.getName().getBaseName() + " complete.");
   }
 
   @Override
