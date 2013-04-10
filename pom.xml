@@ -137,7 +137,8 @@
                         org.apache.commons.vfs2,
                         org.apache.commons.vfs2.impl,
                         org.w3c.dom,
-                        org.xml.sax
+                        org.xml.sax,
+                        org.apache.commons.codec.binary
 					</Import-Package>
 				</instructions>
 			</configuration>
