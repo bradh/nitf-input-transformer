@@ -2,7 +2,7 @@
  * Copyright (c) Lockheed Martin Corporation
  *
  * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either
- * version 3 of the License, or any later version. 
+ * version 3 of the License, or any later version.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details. A copy of the GNU Lesser General Public License is distributed along with this program and can be found at
@@ -40,12 +40,13 @@ public class NITFDirectoryWatcher {
   public void init() throws IOException, URISyntaxException {
     log.info("Starting NITFDirectoryWatcher");
 
-    FileObject directory = fileSystemManager.resolveFile("C:/naruto");
+    FileObject directory = fileSystemManager.resolveFile(this.path);
 
     NITFInputTransformer listener = new NITFInputTransformer();
 
     DefaultFileMonitor fileMonitor = new DefaultFileMonitor(listener);
     fileMonitor.setRecursive(false);
+
     fileMonitor.addFile(directory);
     fileMonitor.start();
   }

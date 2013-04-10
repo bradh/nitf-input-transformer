@@ -2,7 +2,7 @@
  * Copyright (c) Lockheed Martin Corporation
  *
  * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either
- * version 3 of the License, or any later version. 
+ * version 3 of the License, or any later version.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details. A copy of the GNU Lesser General Public License is distributed along with this program and can be found at
@@ -23,6 +23,7 @@ import joms.oms.Init;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileChangeEvent;
 import org.apache.commons.vfs2.FileListener;
+import org.apache.commons.vfs2.FileObject;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -36,6 +37,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Date;
@@ -111,9 +113,14 @@ public class NITFInputTransformer implements FileListener {
 
   @Override
   public void fileCreated(FileChangeEvent fileChangeEvent) throws Exception {
-    //TODO: create metacard
+    FileObject file = fileChangeEvent.getFile();
+    if(!file.getName().getExtension().equals("nitf") && !file.getName().getExtension().equals("ntf")){
+      System.out.println(file.getName().getExtension());
+      return;
+    }
+
     DataInfo dataInfo = new DataInfo();
-    dataInfo.open(fileChangeEvent.getFile().getName().getPath());
+    dataInfo.open(file.getName().getPath());
 
     String info = dataInfo.getInfo();
     dataInfo.close();
