@@ -21,6 +21,7 @@ import ddf.catalog.operation.CreateResponse;
 import joms.oms.DataInfo;
 import joms.oms.Init;
 import joms.oms.Util;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileChangeEvent;
@@ -41,9 +42,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.Date;
 import java.util.UUID;
 
@@ -102,7 +101,7 @@ public class NITFInputTransformer implements FileListener {
     return toString(info.getElementsByTagName("NITF").item(0));
   }
 
-  private Metacard buildMetacard(String title, String location, String metadata ){
+  private Metacard buildMetacard(String title, String location, String metadata, String thumbnail){
     MetacardImpl metacard = new MetacardImpl();
 
     metacard.setTitle( title );
@@ -112,6 +111,7 @@ public class NITFInputTransformer implements FileListener {
 
     metacard.setLocation(location);
     metacard.setMetadata(metadata);
+    metacard.setThumbnail(thumbnail.getBytes());
 
     return metacard;
   }
@@ -139,6 +139,41 @@ public class NITFInputTransformer implements FileListener {
       throw new ThumbnailCreationException("Failed to created thumbnail " + outputFile + " from nitf " + nitfPath);
   }
 
+  String encodeThumbnailToBase64Binary(String fileName)
+          throws IOException {
+
+    File file = new File(fileName);
+    byte[] bytes = loadFile(file);
+    byte[] encoded = Base64.encodeBase64(bytes);
+    String encodedString = new String(encoded);
+
+    return encodedString;
+  }
+
+  private static byte[] loadFile(File file) throws IOException {
+    InputStream is = new FileInputStream(file);
+
+    long length = file.length();
+    if (length > Integer.MAX_VALUE) {
+      // File is too large
+    }
+    byte[] bytes = new byte[(int)length];
+
+    int offset = 0;
+    int numRead = 0;
+    while (offset < bytes.length
+            && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+      offset += numRead;
+    }
+
+    if (offset < bytes.length) {
+      throw new IOException("Could not completely read file "+file.getName());
+    }
+
+    is.close();
+    return bytes;
+  }
+
   @Override
   public void fileCreated(FileChangeEvent fileChangeEvent) throws Exception {
     FileObject file = fileChangeEvent.getFile();
@@ -156,7 +191,7 @@ public class NITFInputTransformer implements FileListener {
 
     CreateResponse response = this.catalog.create(new CreateRequestImpl(buildMetacard(getTitle(buildDocument(info)),
             getPosition(buildDocument(info)),
-            getNITF(buildDocument(info)))));
+            getNITF(buildDocument(info)), encodeThumbnailToBase64Binary(createThumbnail(file.getName().getPath())))));
 
     assert(response.getCreatedMetacards().size() == 1);
     log.info("Processing file: " + file.getName().getBaseName() + " complete.");
