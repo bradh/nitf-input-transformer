@@ -13,18 +13,19 @@
 package org.codice.opendx.utility;
 
 
+import joms.oms.Init;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.log4j.Logger;
 import org.codice.opendx.NITFInputTransformer;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
+
 
 public class NITFDirectoryWatcher {
   private String path;
   private FileAlterationMonitor monitor;
+  private NITFInputTransformer inputTransformer;
 
   private static final Logger log = Logger.getLogger(NITFDirectoryWatcher.class);
 
@@ -35,8 +36,7 @@ public class NITFDirectoryWatcher {
     File directory = new File(path);
     FileAlterationObserver observer = new FileAlterationObserver(directory);
 
-    NITFInputTransformer listener = new NITFInputTransformer();
-    observer.addListener(listener);
+    observer.addListener(inputTransformer);
 
     long interval = 5000l;
     monitor = new FileAlterationMonitor(interval);
@@ -46,10 +46,15 @@ public class NITFDirectoryWatcher {
 
   public void destroy() throws Exception{
     log.info("Stopping NITFDirectoryWatcher");
+    Init.instance().delete();
     monitor.stop();
   }
 
   public void setPath(String path){
     this.path = path;
+  }
+
+  public void setInputTransformer(NITFInputTransformer inputTransformer) {
+    this.inputTransformer = inputTransformer;
   }
 }
