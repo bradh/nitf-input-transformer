@@ -96,6 +96,12 @@
             <version>1.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-vfs2</artifactId>
+            <version>2.0</version>
+        </dependency>
+
     </dependencies>
 
   <build>
@@ -111,18 +117,27 @@
 				<instructions>
 					<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 					<Import-Package>
-					    ddf.catalog.*,
-						  org.osgi.framework,
-              org.osgi.service.blueprint,
-              com.vividsolutions.jts.*,
-              org.apache.commons.io,
-              org.apache.log4j,
-              org.apache.commons.lang,
-              org.apache.commons.httpclient.*,
-              org.osgi.service.cm,
-              org.geotools.filter,
-              org.opengis.filter,
-              org.opengis.filter.expression
+                        ddf.catalog.*,
+                        org.osgi.framework,
+                        org.osgi.service.blueprint,
+                        com.vividsolutions.jts.*,
+                        org.apache.commons.io,
+                        org.apache.log4j,
+                        org.apache.commons.lang,
+                        org.apache.commons.httpclient.*,
+                        org.osgi.service.cm,
+                        org.geotools.filter,
+                        org.opengis.filter,
+                        org.opengis.filter.expression,
+                        javax.xml.parsers,
+                        javax.xml.transform,
+                        javax.xml.transform.dom,
+                        javax.xml.transform.stream,
+                        joms.oms,
+                        org.apache.commons.vfs2,
+                        org.apache.commons.vfs2.impl,
+                        org.w3c.dom,
+                        org.xml.sax
 					</Import-Package>
 				</instructions>
 			</configuration>
