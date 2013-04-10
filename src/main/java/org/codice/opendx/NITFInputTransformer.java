@@ -49,8 +49,6 @@ public class NITFInputTransformer implements FileAlterationListener {
 
   static { /* works fine! ! */
     System.setProperty("java.awt.headless", "true");
-    System.out.println(java.awt.GraphicsEnvironment.isHeadless());
-      /* ---> prints true */
   }
 
   private static final Logger log = Logger.getLogger(NITFInputTransformer.class);
@@ -102,15 +100,17 @@ public class NITFInputTransformer implements FileAlterationListener {
 
   private Metacard buildMetacard(String title, String location, String metadata, String thumbnail){
     MetacardImpl metacard = new MetacardImpl();
-    metacard.setType(new NITFMetacardType());
+    metacard.setId(UUID.randomUUID().toString());
     metacard.setTitle( title );
 
-    metacard.setContentTypeName("image/nitf");
+    metacard.setContentTypeName("image/jpeg");
     metacard.setModifiedDate(new Date());
 
     metacard.setLocation(location);
     metacard.setMetadata(metadata);
     metacard.setThumbnail(thumbnail.getBytes());
+    metacard.setCreatedDate(new Date());
+    metacard.setModifiedDate(new Date());
 
     return metacard;
   }
@@ -206,11 +206,26 @@ public class NITFInputTransformer implements FileAlterationListener {
       dataInfo.open(file.getPath());
 
       String info = dataInfo.getInfo();
+      String position = getPosition(buildDocument(info));
+      String title = getTitle(buildDocument(info));
+      String nitf = getNITF(buildDocument(info));
+      String thumbnail = encodeThumbnailToBase64Binary(createThumbnail(file.getPath()));
+      log.info("Creating metacard with title: " + title +
+              "," +
+              " position: " + position +
+              "," +
+              " nitf: " + nitf +
+              " and" +
+              " thumbnail: " + thumbnail
+              );
+
       dataInfo.close();
 
-      CreateResponse response = this.catalog.create(new CreateRequestImpl(buildMetacard(getTitle(buildDocument(info)),
-              getPosition(buildDocument(info)),
-              getNITF(buildDocument(info)), encodeThumbnailToBase64Binary(createThumbnail(file.getPath())))));
+
+
+      CreateResponse response = this.catalog.create(new CreateRequestImpl( buildMetacard(title,
+              position,
+              nitf, thumbnail)));
 
       assert(response.getCreatedMetacards().size() == 1);
       log.info("Processing file: " + FilenameUtils.getBaseName(file.getAbsolutePath()) + " complete.");
