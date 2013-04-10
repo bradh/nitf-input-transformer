@@ -17,25 +17,19 @@ import ddf.catalog.data.MetacardImpl;
 import ddf.catalog.federation.FederationException;
 import ddf.catalog.operation.CreateRequest;
 import ddf.catalog.operation.CreateResponseImpl;
-import ddf.catalog.operation.QueryRequest;
-import ddf.catalog.operation.QueryResponseImpl;
 import ddf.catalog.source.IngestException;
 import ddf.catalog.source.SourceUnavailableException;
-import ddf.catalog.source.UnsupportedQueryException;
-import org.apache.commons.vfs2.FileChangeEvent;
-import org.apache.commons.vfs2.VFS;
+
 import org.junit.Test;
 
-
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertNotSame;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertNotSame;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 public class TestNITFInputTransformer {
 
@@ -59,7 +53,7 @@ public class TestNITFInputTransformer {
     Thread.currentThread().getContextClassLoader().getResource("i_3001a.ntf");
     String file = Thread.currentThread().getContextClassLoader().getResource("i_3001a.ntf").getFile();
 
-    transformer.fileCreated(new FileChangeEvent(VFS.getManager().resolveFile(file)));
+    transformer.onFileCreate(new File(file));
     verify(catalog).create(any(CreateRequest.class));
   }
 
@@ -69,7 +63,7 @@ public class TestNITFInputTransformer {
     Thread.currentThread().getContextClassLoader().getResource("i_3001a.ntf");
     String file = Thread.currentThread().getContextClassLoader().getResource("notanitf.txt").getFile();
 
-    transformer.fileCreated(new FileChangeEvent(VFS.getManager().resolveFile(file)));
+    transformer.onFileCreate(new File(file));
     verify(catalog, never()).create(any(CreateRequest.class));
   }
 

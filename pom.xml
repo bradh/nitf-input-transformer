@@ -73,12 +73,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient-osgi</artifactId>
-            <version>4.2.3</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.vividsolutions</groupId>
             <artifactId>jts</artifactId>
             <version>1.12</version>
@@ -91,15 +85,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.radiantblue.ossim.oms</groupId>
+            <groupId>org.ossim.oms</groupId>
             <artifactId>joms</artifactId>
             <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-vfs2</artifactId>
-            <version>2.0</version>
         </dependency>
 
     </dependencies>
@@ -116,15 +104,15 @@
 			<configuration>
 				<instructions>
 					<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                    <Embed-Dependency>joms;org.apache.io.monitor;inline=true</Embed-Dependency>
 					<Import-Package>
                         ddf.catalog.*,
                         org.osgi.framework,
                         org.osgi.service.blueprint,
-                        com.vividsolutions.jts.*,
+                        com.vividsolutions.jts,
                         org.apache.commons.io,
                         org.apache.log4j,
                         org.apache.commons.lang,
-                        org.apache.commons.httpclient.*,
                         org.osgi.service.cm,
                         org.geotools.filter,
                         org.opengis.filter,
@@ -133,13 +121,19 @@
                         javax.xml.transform,
                         javax.xml.transform.dom,
                         javax.xml.transform.stream,
-                        joms.oms,
-                        org.apache.commons.vfs2,
-                        org.apache.commons.vfs2.impl,
+                        org.apache.commons.io.monitor,
+
+
                         org.w3c.dom,
                         org.xml.sax,
-                        org.apache.commons.codec.binary
+                        org.apache.commons.codec.binary,
+                        !*
+
+
 					</Import-Package>
+                    <Export-Package>
+
+                    </Export-Package>
 				</instructions>
 			</configuration>
 		</plugin>

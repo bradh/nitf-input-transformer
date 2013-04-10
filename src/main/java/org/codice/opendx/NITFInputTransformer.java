@@ -23,16 +23,15 @@ import joms.oms.Init;
 import joms.oms.Util;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.vfs2.FileChangeEvent;
-import org.apache.commons.vfs2.FileListener;
-import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.io.monitor.FileAlterationListener;
+import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.log4j.Logger;
+import org.codice.opendx.utility.ThumbnailCreationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
-import org.codice.opendx.utility.ThumbnailCreationException;
-
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -46,7 +45,7 @@ import java.io.*;
 import java.util.Date;
 import java.util.UUID;
 
-public class NITFInputTransformer implements FileListener {
+public class NITFInputTransformer implements FileAlterationListener {
 
   static { /* works fine! ! */
     System.setProperty("java.awt.headless", "true");
@@ -103,7 +102,7 @@ public class NITFInputTransformer implements FileListener {
 
   private Metacard buildMetacard(String title, String location, String metadata, String thumbnail){
     MetacardImpl metacard = new MetacardImpl();
-
+    metacard.setType(new NITFMetacardType());
     metacard.setTitle( title );
 
     metacard.setContentTypeName("image/nitf");
@@ -175,37 +174,66 @@ public class NITFInputTransformer implements FileListener {
   }
 
   @Override
-  public void fileCreated(FileChangeEvent fileChangeEvent) throws Exception {
-    FileObject file = fileChangeEvent.getFile();
-    log.info("Processing file: " + file.getName().getBaseName());
-    if(!file.getName().getExtension().equals("nitf") && !file.getName().getExtension().equals("ntf")){
-      log.info("Not processing file: " + file.getName().getBaseName() + " extension doesn't match 'nitf' or 'ntf'");
-      return;
+  public void onStart(FileAlterationObserver fileAlterationObserver) {
+    //NOOP
+  }
+
+  @Override
+  public void onDirectoryCreate(File file) {
+    //NOOP
+  }
+
+  @Override
+  public void onDirectoryChange(File file) {
+    //NOOP
+  }
+
+  @Override
+  public void onDirectoryDelete(File file) {
+    //NOOP
+  }
+
+  @Override
+  public void onFileCreate(File file) {
+    try {
+      log.info("Processing file: " + FilenameUtils.getBaseName(file.getAbsolutePath()));
+      if(!FilenameUtils.getExtension(file.getAbsolutePath()).equals("nitf") && !FilenameUtils.getExtension(file.getAbsolutePath()).equals("ntf")){
+        log.info("Not processing file: " + FilenameUtils.getBaseName(file.getAbsolutePath()) + " extension doesn't match 'nitf' or 'ntf'");
+        return;
+      }
+
+      DataInfo dataInfo = new DataInfo();
+      dataInfo.open(file.getPath());
+
+      String info = dataInfo.getInfo();
+      dataInfo.close();
+
+      CreateResponse response = this.catalog.create(new CreateRequestImpl(buildMetacard(getTitle(buildDocument(info)),
+              getPosition(buildDocument(info)),
+              getNITF(buildDocument(info)), encodeThumbnailToBase64Binary(createThumbnail(file.getPath())))));
+
+      assert(response.getCreatedMetacards().size() == 1);
+      log.info("Processing file: " + FilenameUtils.getBaseName(file.getAbsolutePath()) + " complete.");
+    }catch (Exception e){
+      log.error("Failed to ingest NITF File: ", e);
     }
-
-    DataInfo dataInfo = new DataInfo();
-    dataInfo.open(file.getName().getPath());
-
-    String info = dataInfo.getInfo();
-    dataInfo.close();
-
-    CreateResponse response = this.catalog.create(new CreateRequestImpl(buildMetacard(getTitle(buildDocument(info)),
-            getPosition(buildDocument(info)),
-            getNITF(buildDocument(info)), encodeThumbnailToBase64Binary(createThumbnail(file.getName().getPath())))));
-
-    assert(response.getCreatedMetacards().size() == 1);
-    log.info("Processing file: " + file.getName().getBaseName() + " complete.");
   }
 
   @Override
-  public void fileDeleted(FileChangeEvent fileChangeEvent) throws Exception {
-    //TODO: remove metacard
+  public void onFileChange(File file) {
+    //TODO: update/delete metacard
   }
 
   @Override
-  public void fileChanged(FileChangeEvent fileChangeEvent) throws Exception {
-    //TODO: update metacard
+  public void onFileDelete(File file) {
+    //TODO: update/delete metacard
   }
+
+  @Override
+  public void onStop(FileAlterationObserver fileAlterationObserver) {
+    //NOOP
+  }
+
 
   public void setCatalog(CatalogFramework catalog) {
     this.catalog = catalog;

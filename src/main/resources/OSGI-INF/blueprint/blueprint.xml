@@ -51,9 +51,8 @@
         <!--<argument value="62626" type="int"/>-->
     <!--</bean>-->
 
-    <bean id="inputStreamAdapter" class="org.codice.opendx.utility.NITFDirectoryWatcher" init-method="init"
+    <bean id="nitfDirectoryWatcher" class="org.codice.opendx.utility.NITFDirectoryWatcher" init-method="init"
             destroy-method="destroy">
-        <argument value="${org.codice.ddf.transform.ais.url}" />
         <property name="path" value="${org.codice.opendx.transform.nitf.path}" />
     </bean>
 

@@ -12,46 +12,44 @@
 
 package org.codice.opendx.utility;
 
-import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.FileSystemException;
-import org.apache.commons.vfs2.FileSystemManager;
-import org.apache.commons.vfs2.VFS;
-import org.apache.commons.vfs2.impl.DefaultFileMonitor;
+
+import org.apache.commons.io.monitor.FileAlterationMonitor;
+import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.log4j.Logger;
 import org.codice.opendx.NITFInputTransformer;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-
-
-
-
-
 public class NITFDirectoryWatcher {
   private String path;
-  private FileSystemManager fileSystemManager;
+  private FileAlterationMonitor monitor;
+
   private static final Logger log = Logger.getLogger(NITFDirectoryWatcher.class);
 
-  public NITFDirectoryWatcher() throws FileSystemException {
-    fileSystemManager = VFS.getManager();
-  }
 
-  public void init() throws IOException, URISyntaxException {
+  public void init() throws Exception {
     log.info("Starting NITFDirectoryWatcher");
 
-    FileObject directory = fileSystemManager.resolveFile(this.path);
+    File directory = new File(path);
+    FileAlterationObserver observer = new FileAlterationObserver(directory);
 
     NITFInputTransformer listener = new NITFInputTransformer();
+    observer.addListener(listener);
 
-    DefaultFileMonitor fileMonitor = new DefaultFileMonitor(listener);
-    fileMonitor.setRecursive(false);
-
-    fileMonitor.addFile(directory);
-    fileMonitor.start();
+    long interval = 5000l;
+    monitor = new FileAlterationMonitor(interval);
+    monitor.addObserver(observer);
+    monitor.start();
   }
 
-  private void setPath(String path){
+  public void destroy() throws Exception{
+    log.info("Stopping NITFDirectoryWatcher");
+    monitor.stop();
+  }
+
+  public void setPath(String path){
     this.path = path;
   }
 }
