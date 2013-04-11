@@ -13,6 +13,11 @@
 package org.codice.opendx;
 
 
+import com.vividsolutions.jts.algorithm.CentroidPoint;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.io.WKTWriter;
 import ddf.catalog.CatalogFramework;
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.MetacardImpl;
@@ -86,8 +91,10 @@ public class NITFInputTransformer implements FileAlterationListener {
     return builder.parse(IOUtils.toInputStream(info));
   }
 
-  private String getPosition(Document info){
-    return info.getElementsByTagName("groundGeom").item(0).getFirstChild().getTextContent();
+  private String getPosition(Document info) throws ParseException {
+    log.info("Original position data: " + info.getElementsByTagName("groundGeom").item(0).getFirstChild().getTextContent());
+    Geometry geometry = new WKTReader().read(info.getElementsByTagName("groundGeom").item(0).getFirstChild().getTextContent());
+    return new WKTWriter().write(geometry.getCentroid());
   }
 
   private String getTitle(Document info){
@@ -99,6 +106,10 @@ public class NITFInputTransformer implements FileAlterationListener {
   }
 
   private Metacard buildMetacard(String title, String location, String metadata, String thumbnail){
+    return buildMetacard(title, location, metadata, thumbnail.getBytes());
+  }
+
+  private Metacard buildMetacard(String title, String location, String metadata, byte [] thumbnail){
     MetacardImpl metacard = new MetacardImpl();
     metacard.setId(UUID.randomUUID().toString());
     metacard.setTitle( title );
@@ -108,7 +119,7 @@ public class NITFInputTransformer implements FileAlterationListener {
 
     metacard.setLocation(location);
     metacard.setMetadata(metadata);
-    metacard.setThumbnail(thumbnail.getBytes());
+    metacard.setThumbnail(thumbnail);
     metacard.setCreatedDate(new Date());
     metacard.setModifiedDate(new Date());
 
@@ -209,14 +220,14 @@ public class NITFInputTransformer implements FileAlterationListener {
       String position = getPosition(buildDocument(info));
       String title = getTitle(buildDocument(info));
       String nitf = getNITF(buildDocument(info));
-      String thumbnail = encodeThumbnailToBase64Binary(createThumbnail(file.getPath()));
+      byte [] thumbnail = loadFile(new File(createThumbnail(file.getPath())));
       log.info("Creating metacard with title: " + title +
               "," +
               " position: " + position +
               "," +
               " nitf: " + nitf +
               " and" +
-              " thumbnail: " + thumbnail
+              " thumbnail: " + (new String(thumbnail))
               );
 
       dataInfo.close();
