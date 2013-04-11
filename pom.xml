@@ -104,12 +104,12 @@
 			<configuration>
 				<instructions>
 					<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                    <Embed-Dependency>joms;org.apache.io.monitor;inline=true</Embed-Dependency>
+                    <Embed-Dependency>joms;jts;org.apache.io.monitor;inline=true</Embed-Dependency>
 					<Import-Package>
                         ddf.catalog.*,
                         org.osgi.framework,
                         org.osgi.service.blueprint,
-                        com.vividsolutions.jts,
+                        
                         org.apache.commons.io,
                         org.apache.log4j,
                         org.apache.commons.lang,
