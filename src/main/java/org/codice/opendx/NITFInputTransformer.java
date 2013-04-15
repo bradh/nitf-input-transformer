@@ -61,7 +61,12 @@ public class NITFInputTransformer implements FileAlterationListener {
   private CatalogFramework catalog;
 
   public NITFInputTransformer() {
+    log.info("Starting NITFInputTransformer");
+    try{
     Init.instance().initialize();
+    } catch (UnsatisfiedLinkError e){
+      log.error("Error initializing joms " + e.getMessage(), e);
+    }
   }
 
   private static String toString(Node doc) {

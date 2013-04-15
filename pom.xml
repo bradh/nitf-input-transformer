@@ -87,7 +87,7 @@
         <dependency>
             <groupId>org.ossim.oms</groupId>
             <artifactId>joms</artifactId>
-            <version>1.0</version>
+            <version>1.8.16</version>
         </dependency>
 
     </dependencies>
