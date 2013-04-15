@@ -62,8 +62,12 @@ public class NITFInputTransformer implements FileAlterationListener {
 
   public NITFInputTransformer() {
     log.info("Starting NITFInputTransformer");
+  }
+
+  public void initializeJoms(){
+    log.info("Initializing JOMS");
     try{
-    Init.instance().initialize();
+      Init.instance().initialize();
     } catch (UnsatisfiedLinkError e){
       log.error("Error initializing joms " + e.getMessage(), e);
     }
@@ -165,7 +169,7 @@ public class NITFInputTransformer implements FileAlterationListener {
     return encodedString;
   }
 
-  private static byte[] loadFile(File file) throws IOException {
+  byte[] loadFile(File file) throws IOException {
     InputStream is = new FileInputStream(file);
 
     long length = file.length();
@@ -187,6 +191,12 @@ public class NITFInputTransformer implements FileAlterationListener {
 
     is.close();
     return bytes;
+  }
+
+  DataInfo dataInfoForFile(String path){
+    DataInfo dataInfo = new DataInfo();
+    dataInfo.open(path);
+    return dataInfo;
   }
 
   @Override
@@ -218,13 +228,17 @@ public class NITFInputTransformer implements FileAlterationListener {
         return;
       }
 
-      DataInfo dataInfo = new DataInfo();
-      dataInfo.open(file.getPath());
+      DataInfo dataInfo = dataInfoForFile(file.getPath());
 
       String info = dataInfo.getInfo();
+
       String position = getPosition(buildDocument(info));
+
       String title = getTitle(buildDocument(info));
+
       String nitf = getNITF(buildDocument(info));
+
+
       byte [] thumbnail = loadFile(new File(createThumbnail(file.getPath())));
       log.info("Creating metacard with title: " + title +
               "," +

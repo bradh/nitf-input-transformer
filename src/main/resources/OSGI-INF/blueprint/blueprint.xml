@@ -27,7 +27,7 @@
     <reference id="ddf-fanout" interface="ddf.catalog.CatalogFramework"/>
 
     <bean id="transformer"
-          class="org.codice.opendx.NITFInputTransformer" >
+          class="org.codice.opendx.NITFInputTransformer" init-method="initializeJoms">
         <property name="catalog" ref="ddf-fanout"/>
     </bean>
 
