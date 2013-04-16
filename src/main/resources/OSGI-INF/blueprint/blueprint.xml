@@ -24,11 +24,10 @@
          </cm:default-properties>
      </cm:property-placeholder>
 
-    <reference id="contentFramework" interface="ddf.content.ContentFramework" />
+    <reference id="ddf-content-framework" interface="ddf.content.ContentFramework" />
 
     <bean id="transformer"
-          class="org.codice.opendx.NITFInputTransformer" >
-        <property name="contentFramework" ref="contentFramework"/>
+          class="org.codice.opendx.NITFInputTransformer" init-method="initializeJoms">
     </bean>
 
     <service ref="transformer" interface="ddf.catalog.transform.InputTransformer">
@@ -43,15 +42,15 @@
         </service-properties>
     </service>
 
-    <bean id="alterationListener"
-          class="org.codice.opendx.NITFFileAlterationListener" init-method="initializeJoms">
-        <property name="content" ref="contentFramework"/>
+    <bean id="listener"
+          class="org.codice.opendx.NITFFileAlterationListener" >
+        <property name="contentFramework" ref="ddf-content-framework"/>
     </bean>
 
     <bean id="nitfDirectoryWatcher" class="org.codice.opendx.utility.NITFDirectoryWatcher" init-method="init"
             destroy-method="destroy">
         <property name="path" value="${org.codice.opendx.transform.nitf.path}" />
-        <property name="alterationListener" ref="alterationListener" />
+        <property name="alterationListener" ref="listener" />
     </bean>
 
 
