@@ -24,17 +24,34 @@
          </cm:default-properties>
      </cm:property-placeholder>
 
-    <reference id="ddf-fanout" interface="ddf.catalog.CatalogFramework"/>
+    <reference id="contentFramework" interface="ddf.content.ContentFramework" />
 
     <bean id="transformer"
-          class="org.codice.opendx.NITFInputTransformer" init-method="initializeJoms">
-        <property name="catalog" ref="ddf-fanout"/>
+          class="org.codice.opendx.NITFInputTransformer" >
+        <property name="contentFramework" ref="contentFramework"/>
+    </bean>
+
+    <service ref="transformer" interface="ddf.catalog.transform.InputTransformer">
+        <service-properties>
+            <entry key="id" value="nitf" />
+            <!-- List of mime type this AISInputTransformer supports -->
+            <entry key="mime-type">
+                <list>
+                    <value>image/nitf</value>
+                </list>
+            </entry>
+        </service-properties>
+    </service>
+
+    <bean id="alterationListener"
+          class="org.codice.opendx.NITFFileAlterationListener" init-method="initializeJoms">
+        <property name="content" ref="contentFramework"/>
     </bean>
 
     <bean id="nitfDirectoryWatcher" class="org.codice.opendx.utility.NITFDirectoryWatcher" init-method="init"
             destroy-method="destroy">
         <property name="path" value="${org.codice.opendx.transform.nitf.path}" />
-        <property name="inputTransformer" ref="transformer" />
+        <property name="alterationListener" ref="alterationListener" />
     </bean>
 
 
