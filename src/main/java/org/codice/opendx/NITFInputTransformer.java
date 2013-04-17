@@ -190,8 +190,8 @@ public class NITFInputTransformer implements InputTransformer {
     int entryId = 0;
     String outputFile = tempDirectory.getAbsolutePath() + jpeg;
     String writerType = "image/jpeg";
-    int xRes = Integer.parseInt("32");
-    int yRes = Integer.parseInt("32");
+    int xRes = Integer.parseInt("64");
+    int yRes = Integer.parseInt("64");
     String histogramFile = "";
     String stretchType = "linear_auto_min_max";
     boolean keepAspectFlag = true;
