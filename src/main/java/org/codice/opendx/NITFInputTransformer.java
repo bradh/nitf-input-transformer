@@ -67,7 +67,8 @@ public class NITFInputTransformer implements InputTransformer {
     FileOutputStream fileOutputStream = new FileOutputStream(file);
     IOUtils.copy(inputStream, fileOutputStream);
 
-    log.info("Processing temp file: " + file.getAbsolutePath());
+    log.info("Processing " + s +
+            " temp file: " + file.getAbsolutePath());
 
     DataInfo dataInfo = dataInfoForFile(file.getPath());
 
@@ -95,8 +96,8 @@ public class NITFInputTransformer implements InputTransformer {
             position,
             nitf, thumbnail);
 
-//    FileUtils.deleteQuietly(file);
-    log.info("Processing file: " + FilenameUtils.getBaseName(file.getAbsolutePath()) + " complete.");
+    FileUtils.deleteQuietly(file);
+    log.info("Processing temp file: " + FilenameUtils.getBaseName(file.getAbsolutePath()) + " complete.");
 
 
     return metacard;
@@ -172,9 +173,7 @@ public class NITFInputTransformer implements InputTransformer {
     MetacardImpl metacard = new MetacardImpl();
     metacard.setTitle( title );
 
-    metacard.setContentTypeName("image/jpeg");
-    metacard.setModifiedDate(new Date());
-
+    metacard.setContentTypeName("image/nitf");
     metacard.setLocation(location);
     metacard.setMetadata(metadata);
     metacard.setThumbnail(thumbnail);

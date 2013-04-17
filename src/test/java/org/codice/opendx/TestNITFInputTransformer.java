@@ -88,7 +88,7 @@ public class TestNITFInputTransformer {
 
     assertNotNull(metacard);
 
-    assertEquals(metacard.getContentTypeName(), "image/jpeg");
+    assertEquals(metacard.getContentTypeName(), "image/nitf");
     assertEquals(metacard.getLocation(), "POINT (85.00013888888888 32.98319444444446)");
     assertEquals(new String(Base64.encodeBase64(metacard.getThumbnail())), getTestEncoding());
   }

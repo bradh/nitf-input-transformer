@@ -73,14 +73,12 @@ public class NITFFileAlterationListener implements FileAlterationListener {
       //create content entry
       ContentItem newItem = new IncomingContentItem( new FileInputStream(file), "image/nitf", file.getName() );
 
-      newItem.setUri( file.getPath() );
-
-      log.info("Creating content item");
+      log.info("Creating content item...");
 
       CreateRequest createRequest = new CreateRequestImpl( newItem, null );
       CreateResponse createResponse = this.contentFramework.create( createRequest, Request.Directive.STORE_AND_PROCESS );
       ContentItem contentItem = createResponse.getCreatedContentItem();
-
+      log.info("Created content item " + contentItem.getUri());
 
 
       log.info("Processing file: " + FilenameUtils.getBaseName(file.getAbsolutePath()) + " complete.");
