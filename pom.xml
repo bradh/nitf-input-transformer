@@ -19,7 +19,7 @@
   <groupId>org.codice.opendx</groupId>
   <artifactId>nitf-input-transformer</artifactId>
   <name>OPENDX :: TRANSFORMER :: INPUT :: NITF</name>
-  <version>1.0</version>
+  <version>1.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
     <scm>
         <developerConnection>scm:git:git@bitbucket.org:codice/nitf-input-transformer.git</developerConnection>
