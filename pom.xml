@@ -38,12 +38,6 @@
             <name>Codice Snapshot Repository</name>
             <url>https://tools.codice.org/artifacts/content/repositories/snapshots/</url>
         </snapshotRepository>
-
-        <repository>
-            <id>codiceReleases</id>
-            <name>Codice Release Repository</name>
-            <url>https://tools.codice.org/artifacts/content/repositories/releases/</url>
-        </repository>
     </distributionManagement>
 
     <dependencies>
