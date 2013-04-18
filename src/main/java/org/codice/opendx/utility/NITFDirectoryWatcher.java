@@ -37,7 +37,7 @@ public class NITFDirectoryWatcher {
     try{
       directory.mkdirs();
     }catch(Exception e){
-      log.warn("Unable to create nitf target directory " + directory.getPath(), e);
+      log.warn("Unable to create nitf target directory: " + directory.getPath(), e);
     }
 
     FileAlterationObserver observer = new FileAlterationObserver(directory);
