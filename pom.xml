@@ -25,11 +25,10 @@
         <developerConnection>scm:git:git@bitbucket.org:codice/nitf-input-transformer.git</developerConnection>
     </scm>
 
-    <parent>
-        <artifactId>catalog</artifactId>
-        <groupId>ddf.catalog</groupId>
-        <version>2.2.0.ALPHA3</version>
-    </parent>
+    <properties>
+        <ddf.version>2.2.0.ALPHA3</ddf.version>
+    </properties>
+
 
     <distributionManagement>
         <snapshotRepository>
@@ -43,27 +42,34 @@
     <dependencies>
 
         <dependency>
+            <groupId>ddf</groupId>
+            <artifactId>ddf</artifactId>
+            <type>pom</type>
+            <version>${ddf.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>ddf.content.core</groupId>
             <artifactId>content-core-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${ddf.version}</version>
         </dependency>
 
         <dependency>
             <groupId>ddf.catalog.core</groupId>
             <artifactId>catalog-core-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${ddf.version}</version>
         </dependency>
 
         <dependency>
             <groupId>ddf.content.core</groupId>
             <artifactId>content-core-impl</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${ddf.version}</version>
         </dependency>
 
         <dependency>
             <groupId>ddf.catalog.common</groupId>
             <artifactId>geo-formatter</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${ddf.version}</version>
         </dependency>
 
         <dependency>
@@ -136,6 +142,7 @@
 		<plugin>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>maven-bundle-plugin</artifactId>
+            <extensions>true</extensions>
 			<configuration>
 				<instructions>
 					<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
