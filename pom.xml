@@ -21,7 +21,10 @@
   <name>OPENDX :: TRANSFORMER :: INPUT :: NITF</name>
   <version>1.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
-    
+    <scm>
+        <developerConnection>scm:git:git@bitbucket.org:codice/nitf-input-transformer.git</developerConnection>
+    </scm>
+
     <parent>
         <artifactId>catalog</artifactId>
         <groupId>ddf.catalog</groupId>
@@ -169,6 +172,13 @@
 				</instructions>
 			</configuration>
 		</plugin>
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <version>2.4.1</version>
+        </plugin>
+
 	</plugins>
   </build>
 	
