@@ -21,8 +21,8 @@
   <name>OPENDX :: TRANSFORMER :: INPUT :: NITF</name>
   <version>1.2-SNAPSHOT</version>
   <packaging>bundle</packaging>
-    <scm>
-        <developerConnection>scm:git:git@bitbucket.org:codice/nitf-input-transformer.git</developerConnection>
+  <scm>
+      <developerConnection>scm:git:git@bitbucket.org:codice/nitf-input-transformer.git</developerConnection>
       <tag>HEAD</tag>
   </scm>
 
