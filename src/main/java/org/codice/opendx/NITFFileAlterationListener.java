@@ -65,7 +65,8 @@ public class NITFFileAlterationListener implements FileAlterationListener {
   public void onFileCreate(File file) {
     try {
       log.info("Processing file: " + FilenameUtils.getBaseName(file.getAbsolutePath()));
-      if(!FilenameUtils.getExtension(file.getAbsolutePath()).equals("nitf") && !FilenameUtils.getExtension(file.getAbsolutePath()).equals("ntf")){
+      if(!FilenameUtils.getExtension(file.getAbsolutePath()).toLowerCase().equals("nitf")
+              && !FilenameUtils.getExtension(file.getAbsolutePath()).toLowerCase().equals("ntf")){
         log.info("Not processing file: " + FilenameUtils.getBaseName(file.getAbsolutePath()) + " extension doesn't match 'nitf' or 'ntf'");
         return;
       }
@@ -94,7 +95,7 @@ public class NITFFileAlterationListener implements FileAlterationListener {
 
   @Override
   public void onFileDelete(File file) {
-    //TODO: update/delete metacard
+    log.info("File deleted: " + file.getPath());
   }
 
   @Override

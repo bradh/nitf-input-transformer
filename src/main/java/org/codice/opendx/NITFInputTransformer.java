@@ -62,45 +62,60 @@ public class NITFInputTransformer implements InputTransformer {
 
   @Override
   public Metacard transform(InputStream inputStream, String s) throws IOException, CatalogTransformerException {
-    //stream nitf to temp file
-    File file = File.createTempFile(UUID.randomUUID().toString(), ".nitf");
-    FileOutputStream fileOutputStream = new FileOutputStream(file);
-    IOUtils.copy(inputStream, fileOutputStream);
+    try{
+      //stream nitf to temp file
+      File file = File.createTempFile(UUID.randomUUID().toString(), ".nitf");
+      FileOutputStream fileOutputStream = new FileOutputStream(file);
+      IOUtils.copy(inputStream, fileOutputStream);
 
-    log.info("Processing " + s +
-            " temp file: " + file.getAbsolutePath());
+      log.info("Processing " + s +
+              " temp file: " + file.getAbsolutePath());
 
-    DataInfo dataInfo = dataInfoForFile(file.getPath());
+      DataInfo dataInfo = dataInfoForFile(file.getPath());
+      
+      String position;
+      String nitf;
+      String title;
 
-    String info = dataInfo.getInfo();
+      String info = dataInfo.getInfo();
+      if(info == null || info.isEmpty()){
+        title = file.getName();
 
-    String position = getPosition(buildDocument(info));
+        position = null;
 
-    String title = getTitle(buildDocument(info));
+        nitf = "<nitf><filename>" + title +
+                "</filename></nitf>";
+      }else{
+        position = getPosition(buildDocument(info));
 
-    String nitf = getNITF(buildDocument(info));
+        title = getTitle(buildDocument(info));
 
-    byte [] thumbnail = loadFile(new File(createThumbnail(file.getPath())));
-    log.info("Creating metacard with title: " + title +
-            "," +
-            " position: " + position +
-            "," +
-            " nitf: " + nitf +
-            " and" +
-            " thumbnail: " + (new String(thumbnail))
-    );
+        nitf = getNITF(buildDocument(info));
+      }
 
-    dataInfo.close();
+      byte [] thumbnail = loadFile(new File(createThumbnail(file.getPath())));
+      log.info("Creating metacard with title: " + title +
+              "," +
+              " position: " + position +
+              "," +
+              " nitf: " + nitf +
+              " and" +
+              " thumbnail: " + (new String(thumbnail))
+      );
 
-    Metacard metacard = buildMetacard(title,
-            position,
-            nitf, thumbnail);
+      dataInfo.close();
 
-    FileUtils.deleteQuietly(file);
-    log.info("Processing temp file: " + FilenameUtils.getBaseName(file.getAbsolutePath()) + " complete.");
+      Metacard metacard = buildMetacard(title,
+              position,
+              nitf, thumbnail);
 
-
-    return metacard;
+      FileUtils.deleteQuietly(file);
+      log.info("Processing temp file: " + FilenameUtils.getBaseName(file.getAbsolutePath()) + " complete.");
+      return metacard;
+    }catch(Exception e){
+      log.error(e.getMessage(), e);
+      throw new CatalogTransformerException(e);
+    }
   }
 
   public void initializeJoms(){
