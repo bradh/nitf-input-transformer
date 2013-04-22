@@ -186,8 +186,12 @@ public class NITFInputTransformer implements InputTransformer {
 
   private Metacard buildMetacard(String title, String location, String metadata, byte [] thumbnail){
     MetacardImpl metacard = new MetacardImpl();
-    metacard.setTitle( title );
 
+    NITFMetacardType type = new NITFMetacardType();
+    type.setAttributeDescriptors(metacard.getMetacardType().getAttributeDescriptors());
+    metacard.setType(type);
+
+    metacard.setTitle( title );
     metacard.setContentTypeName("image/nitf");
     metacard.setLocation(location);
     metacard.setMetadata(metadata);

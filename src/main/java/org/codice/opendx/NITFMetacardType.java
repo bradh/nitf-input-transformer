@@ -14,6 +14,7 @@ package org.codice.opendx;
 
 import ddf.catalog.data.AttributeDescriptor;
 import ddf.catalog.data.MetacardType;
+import ddf.catalog.data.MetacardTypeImpl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -27,18 +28,30 @@ import java.util.Set;
 public class NITFMetacardType implements MetacardType{
 
 
+  private Set<AttributeDescriptor> attributeDescriptors;
+
   @Override
   public String getName() {
     return "NITF";
   }
 
-  @Override
-  public Set<AttributeDescriptor> getAttributeDescriptors() {
-    return new HashSet<AttributeDescriptor>();
+
+  void setAttributeDescriptors( Set<AttributeDescriptor> attributeDescriptors){
+    this.attributeDescriptors = attributeDescriptors;
   }
 
   @Override
-  public AttributeDescriptor getAttributeDescriptor(String s) {
+  public Set<AttributeDescriptor> getAttributeDescriptors() {
+    return this.attributeDescriptors;
+  }
+
+  @Override
+  public AttributeDescriptor getAttributeDescriptor(String name) {
+    for(AttributeDescriptor descriptor : this.attributeDescriptors){
+      if(descriptor.getName().equals(name)){
+        return descriptor;
+      }
+    }
     return null;
   }
 }
