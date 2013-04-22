@@ -72,7 +72,7 @@ public class NITFInputTransformer implements InputTransformer {
               " temp file: " + file.getAbsolutePath());
 
       DataInfo dataInfo = dataInfoForFile(file.getPath());
-
+      
       String position;
       String nitf;
       String title;
@@ -186,7 +186,6 @@ public class NITFInputTransformer implements InputTransformer {
 
   private Metacard buildMetacard(String title, String location, String metadata, byte [] thumbnail){
     MetacardImpl metacard = new MetacardImpl();
-    metacard.setType(new NITFMetacardType());
     metacard.setTitle( title );
 
     metacard.setContentTypeName("image/nitf");
