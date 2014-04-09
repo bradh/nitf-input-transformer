@@ -27,9 +27,19 @@
   </scm>
 
     <properties>
-        <ddf.version>2.2.0.ALPHA3</ddf.version>
+        <ddf.version>2.2.2</ddf.version>
     </properties>
 
+  <repositories>
+    <repository>
+      <id>codice.releases</id>
+      <url>http://artifacts.codice.org/content/repositories/releases</url>
+    </repository>
+    <repository>
+      <id>codice.snapshots</id>
+      <url>http://artifacts.codice.org/content/repositories/snapshots</url>
+    </repository>
+  </repositories>
 
     <distributionManagement>
         <repository>
